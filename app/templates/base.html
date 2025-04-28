@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% csrf_token %}
+  <title>{% block title %}{% endblock %}</title>
+  
+  <!-- CSS do Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+  <style>
+    /* Estilo Global */
+    body {
+        font-family: 'Open Sans', sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    header {
+        background-color: #0096c7;
+        color: #fff;
+        text-align: center;
+    }
+
+    main {
+        flex: 1;
+        padding: 20px;
+    }
+
+    footer {
+        background-color: #ccc;
+        color: #333;
+        padding: 20px;
+        text-align: center;
+    }
+
+    nav {
+        background-color: #0096c7;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 10px;
+    }
+
+    nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 20px;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+    nav ul li a:hover {
+        background-color: #32bbe8;
+        border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="menu">
+        <!-- Aqui foi corrigido para abrir o modal corretamente -->
+        <li><a href="#" data-bs-toggle="modal" data-bs-target="#pedidosModal">Meus pedidos</a></li>
+        <li><a href="#">Meus endereços</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}
+    
+    <!-- Modal -->
+    <div class="modal fade" id="pedidosModal" tabindex="-1" aria-labelledby="pedidosModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="pedidosModalLabel">Últimos Pedidos</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>05/01/2025</td>
+                  <td>R$ 19,00</td>
+                  <td><a href="#" class="text-primary">Ver Pedido</a></td>
+                </tr>
+                <tr>
+                  <td>05/01/2025</td>
+                  <td>R$ 24,00</td>
+                  <td><a href="#" class="text-primary">Ver Pedido</a></td>
+                </tr>
+                <tr>
+                  <td>05/01/2025</td>
+                  <td>R$ 12,00</td>
+                  <td><a href="#" class="text-primary">Ver Pedido</a></td>
+                </tr>
+                <tr>
+                  <td>06/12/2024</td>
+                  <td>R$ 26,00</td>
+                  <td><a href="#" class="text-primary">Ver Pedido</a></td>
+                </tr>
+                <tr>
+                  <td>06/12/2024</td>
+                  <td>R$ 31,00</td>
+                  <td><a href="#" class="text-primary">Ver Pedido</a></td>
+                </tr>
+                <tr>
+                  <td>06/12/2024</td>
+                  <td>R$ 30,00</td>
+                  <td><a href="#" class="text-primary">Ver Pedido</a></td>
+                </tr>
+                <tr>
+                  <td>06/12/2024</td>
+                  <td>R$ 20,00</td>
+                  <td><a href="#" class="text-primary">Ver Pedido</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endblock %}
+  </main>
+
+  <footer>
+    <a>&copy; Marmitaria Fran Rocha</a>  <br/>
+    <a>Telefone: (14) 9-9815-7565</a> <br/>
+    <a>Endereço: Avenida Frederico Ozanan, 908 Vila Santa Maria</a> <br/>
+    <a>Tecnologia: List Foods</a>
+  </footer>
+
+  <!-- JS do Bootstrap -->
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

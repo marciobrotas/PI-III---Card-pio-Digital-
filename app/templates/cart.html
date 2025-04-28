@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Seu Carrinho</h1>
+
+    {% if cart_items %}
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="space-y-6">
+                {% for item in cart_items %}
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4" data-item-id="{{ item.id }}">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold">{{ item.food.name }}</h3>
+                            {% if item.selected_complements.all %}
+                                <div class="text-sm text-gray-600 mt-1">
+                                    <span class="font-medium">Complementos:</span>
+                                    {% for complement in item.selected_complements.all %}
+                                        {{ complement.name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if item.notes %}
+                                <div class="text-sm text-gray-600 mt-1">
+                                    <span class="font-medium">Observações:</span> {{ item.notes }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                            <div class="flex items-center border rounded-lg">
+                                <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 decrease-quantity">-</button>
+                                <input type="number" value="{{ item.quantity }}" min="1" 
+                                       class="w-16 text-center border-x quantity-input"
+                                       data-item-id="{{ item.id }}">
+                                <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 increase-quantity">+</button>
+                            </div>
+                            <div class="text-lg font-semibold">
+                                R$ {{ item.get_item_total|floatformat:2 }}
+                            </div>
+                            <button class="text-red-500 hover:text-red-700 remove-item"
+                                    data-item-id="{{ item.id }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="mt-8 flex justify-between items-center">
+                <div class="text-2xl font-bold">
+                    Total: R$ <span id="cart-total">{{ cart.get_total|floatformat:2 }}</span>
+                </div>
+                <a href="#" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
+                    Finalizar Pedido
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <p class="text-xl text-gray-600">Seu carrinho está vazio</p>
+            <a href="{% url 'foods_viwer' %}" class="inline-block mt-4 text-green-500 hover:text-green-600">
+                Continuar comprando
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Função para atualizar quantidade
+    function updateQuantity(itemId, newQuantity) {
+        fetch(`/cart/update/${itemId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify({ quantity: newQuantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('cart-total').textContent = data.cart_total.toFixed(2);
+                if (data.message === 'Item removido do carrinho') {
+                    const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+                    itemElement.remove();
+                    if (document.querySelectorAll('[data-item-id]').length === 0) {
+                        location.reload();
+                    }
+                }
+            } else {
+                alert(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erro ao atualizar o carrinho');
+        });
+    }
+
+    // Event listeners para os botões de quantidade
+    document.querySelectorAll('.decrease-quantity').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('.quantity-input');
+            const newValue = parseInt(input.value) - 1;
+            if (newValue >= 0) {
+                input.value = newValue;
+                updateQuantity(input.dataset.itemId, newValue);
+            }
+        });
+    });
+
+    document.querySelectorAll('.increase-quantity').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('.quantity-input');
+            const newValue = parseInt(input.value) + 1;
+            input.value = newValue;
+            updateQuantity(input.dataset.itemId, newValue);
+        });
+    });
+
+    // Event listener para input manual de quantidade
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const newValue = parseInt(this.value);
+            if (newValue >= 0) {
+                updateQuantity(this.dataset.itemId, newValue);
+            } else {
+                this.value = 1;
+            }
+        });
+    });
+
+    // Event listener para remover item
+    document.querySelectorAll('.remove-item').forEach(button => {
+        button.addEventListener('click', function() {
+            if (confirm('Tem certeza que deseja remover este item?')) {
+                updateQuantity(this.dataset.itemId, 0);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}
