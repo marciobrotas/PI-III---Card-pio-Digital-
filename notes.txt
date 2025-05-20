@@ -1,0 +1,48 @@
+GIT: local
+
+Adicionar os arquivos modificados ao stage
+git add .
+
+adicionar um arquivo específico:
+git add nome_do_arquivo
+
+
+Criar um commit com um comentário
+git commit -m "Descrição das alterações"
+
+Enviar para o repositório remoto:
+git push origin nome-da-branch
+
+GIT: Server
+git pull (Na pasta do projeto)
+
+
+
+# Verificar o status do repositório
+git status
+
+# Puxar as atualizações do repositório remoto
+git pull
+
+# Verificar se as migrações precisam ser aplicadas
+python3 manage.py migrate
+
+# Limpar a tabela (caso precise)
+# SQLite3: 
+# sqlite3 db.sqlite3
+# DELETE FROM nome_da_tabela;
+
+# Verificar o status do serviço uWSGI
+sudo systemctl status list_foods.service
+
+# Reiniciar o serviço uWSGI
+sudo systemctl restart list_foods.service
+
+# Verificar o status do servidor uWSGI após o reinício
+sudo systemctl status list_foods.service
+
+# Reiniciar o Nginx
+sudo systemctl restart nginx
+
+# Atualizar dependências do projeto
+pip install -r requirements.txt
